@@ -153,11 +153,15 @@ namespace ZCore
             return result;
         }
 
-        public static Vector2 ScreenToWorld(Camera camera, Vector2 source)
+        public static Vector3 ScreenToWorld(Camera camera, Vector2 source)
         {
-            return (Vector2)camera.ScreenToWorldPoint(source);
+            // offset camera z position so result is always z = 0
+            var zeroedPos = new Vector3(source.x, source.y, -camera.transform.position.z);
+
+            return camera.ScreenToWorldPoint(zeroedPos);
         }
 
+        #region Debug drawing
         public static void DrawScreenLine(Camera camera, Vector2 screenPosStart, Vector2 screenPosEnd)
         {
             Debug.DrawLine(ScreenToWorld(camera, screenPosStart),
@@ -165,6 +169,35 @@ namespace ZCore
                            Color.blue,
                            0.2f);
         }
+
+        public static void DrawHorizontal(Vector2 origin, float size, Color color, float duration)
+        {
+            var start = origin;
+            start.x -= size;
+
+            var end = origin;
+            end.x += size;
+
+            Debug.DrawLine(start, end, color, duration);
+        }
+
+        public static void DrawVertical(Vector2 origin, float size, Color color, float duration)
+        {
+            var start = origin;
+            start.y -= size;
+
+            var end = origin;
+            end.y += size;
+
+            Debug.DrawLine(start, end, color, duration);
+        }
+
+        public static void DrawCross(Vector2 origin, float size, Color color, float duration)
+        {
+            DrawHorizontal(origin, size, color, duration);
+            DrawVertical(origin, size, color, duration);
+        }
+        #endregion
 
         public static int Circular(int current, int size)
         {
